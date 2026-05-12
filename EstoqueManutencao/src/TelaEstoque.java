@@ -65,12 +65,12 @@ public class TelaEstoque extends javax.swing.JFrame {
             .orElse(null);
 
         labelTotal.setText(
-            "Total Geral: " +
+            "Total Geral do Estoque: " +
             moeda.format(totalGeral)
         );
 
         labelMaior.setText(
-            "Maior Item: " +
+            "Item de Maior Valor: " +
             maior.getNome() +
             " - " +
             moeda.format(maior.getValorTotal())
