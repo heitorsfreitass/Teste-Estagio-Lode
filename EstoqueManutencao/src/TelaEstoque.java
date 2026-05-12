@@ -3,6 +3,11 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 
+import java.text.NumberFormat;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Locale;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -22,18 +27,54 @@ public class TelaEstoque extends javax.swing.JFrame {
     }
     
     private void carregarTabela() {
-        DefaultTableModel model =
-            (DefaultTableModel) tabelaPecas.getModel();
-        
+        List<Peca> pecas = Arrays.asList(
+        new Peca(1, "Rolamento", 10, 25),
+        new Peca(2, "Motor", 2, 3000),
+        new Peca(3, "Filtro", 20, 15),
+        new Peca(4, "Correia", 5, 120),
+        new Peca(5, "Bomba", 1, 4500)
+    );
+
+    DefaultTableModel model =
+        (DefaultTableModel) tabelaPecas.getModel();
+
         model.setRowCount(0);
 
-        model.addRow(new Object[]{
-            1,
-            "Motor",
-            2,
-            "R$ 3000",
-            "R$ 6000"
-        });
+        NumberFormat moeda =
+            NumberFormat.getCurrencyInstance(
+                new Locale("pt", "BR")
+            );
+
+        double totalGeral = 0;
+
+        for (Peca p : pecas) {
+
+            model.addRow(new Object[]{
+                p.getId(),
+                p.getNome(),
+                p.getQuantidade(),
+                moeda.format(p.getPreco()),
+                moeda.format(p.getValorTotal())
+            });
+
+            totalGeral += p.getValorTotal();
+        }
+
+        Peca maior = pecas.stream()
+            .max(Comparator.comparing(Peca::getValorTotal))
+            .orElse(null);
+
+        labelTotal.setText(
+            "Total Geral: " +
+            moeda.format(totalGeral)
+        );
+
+        labelMaior.setText(
+            "Maior Item: " +
+            maior.getNome() +
+            " - " +
+            moeda.format(maior.getValorTotal())
+        );
     }
 
     /**
@@ -48,8 +89,8 @@ public class TelaEstoque extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         tabelaPecas = new javax.swing.JTable();
-        jLabel2 = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
+        labelTotal = new javax.swing.JLabel();
+        labelMaior = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -69,9 +110,11 @@ public class TelaEstoque extends javax.swing.JFrame {
         ));
         jScrollPane1.setViewportView(tabelaPecas);
 
-        jLabel2.setText("Total Geral do Estoque:");
+        labelTotal.setFont(new java.awt.Font("Liberation Sans", 1, 18)); // NOI18N
+        labelTotal.setText("Total Geral do Estoque:");
 
-        jLabel3.setText("Item de Maior Valor:");
+        labelMaior.setFont(new java.awt.Font("Liberation Sans", 1, 18)); // NOI18N
+        labelMaior.setText("Item de Maior Valor:");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -83,10 +126,10 @@ public class TelaEstoque extends javax.swing.JFrame {
                 .addGap(331, 331, 331))
             .addGroup(layout.createSequentialGroup()
                 .addGap(40, 40, 40)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel3)
-                    .addComponent(jLabel2)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 810, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 810, Short.MAX_VALUE)
+                    .addComponent(labelTotal, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(labelMaior, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -96,11 +139,11 @@ public class TelaEstoque extends javax.swing.JFrame {
                 .addComponent(jLabel1)
                 .addGap(42, 42, 42)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(31, 31, 31)
-                .addComponent(jLabel2)
-                .addGap(33, 33, 33)
-                .addComponent(jLabel3)
-                .addContainerGap(52, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addComponent(labelTotal)
+                .addGap(18, 18, 18)
+                .addComponent(labelMaior)
+                .addContainerGap(72, Short.MAX_VALUE))
         );
 
         pack();
@@ -133,9 +176,9 @@ public class TelaEstoque extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JLabel labelMaior;
+    private javax.swing.JLabel labelTotal;
     private javax.swing.JTable tabelaPecas;
     // End of variables declaration//GEN-END:variables
 }
